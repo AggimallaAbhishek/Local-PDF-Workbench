@@ -52,6 +52,26 @@ def require_output_dir(path: str) -> Path:
     return p
 
 
+def resolve_pages(raw_pages: Any, page_count: int) -> set[int]:
+    """Parses the "pages": "all" | [1, 3] option shape shared by several
+    tools (rotate, watermark, redact, crop) that act on a page subset."""
+    if raw_pages in (None, "all"):
+        return set(range(1, page_count + 1))
+    if not isinstance(raw_pages, list) or not raw_pages:
+        raise ToolError("INVALID_OPTIONS", "'pages' must be \"all\" or a non-empty list of page numbers.")
+
+    pages = set()
+    for entry in raw_pages:
+        page_number = int(entry)
+        if page_number < 1 or page_number > page_count:
+            raise ToolError(
+                "PAGE_OUT_OF_RANGE",
+                f"Page {page_number} is out of range for a {page_count}-page document.",
+            )
+        pages.add(page_number)
+    return pages
+
+
 def output_filename(options: dict[str, Any], key: str, default: str) -> str:
     name = options.get(key) or default
     if not str(name).lower().endswith(".pdf"):

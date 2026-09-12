@@ -13,27 +13,9 @@ from typing import Any
 from pypdf import PdfReader, PdfWriter
 
 from engine.jobs.contract import JobRequest, JobResult
-from engine.tools.common import ToolError, output_filename, require_input_pdf, run_tool
+from engine.tools.common import ToolError, output_filename, require_input_pdf, resolve_pages, run_tool
 
 VALID_ANGLES = {90, 180, 270}
-
-
-def _resolve_pages(raw_pages: Any, page_count: int) -> set[int]:
-    if raw_pages in (None, "all"):
-        return set(range(1, page_count + 1))
-    if not isinstance(raw_pages, list) or not raw_pages:
-        raise ToolError("INVALID_OPTIONS", "'pages' must be \"all\" or a non-empty list of page numbers.")
-
-    pages = set()
-    for entry in raw_pages:
-        page_number = int(entry)
-        if page_number < 1 or page_number > page_count:
-            raise ToolError(
-                "PAGE_OUT_OF_RANGE",
-                f"Page {page_number} is out of range for a {page_count}-page document.",
-            )
-        pages.add(page_number)
-    return pages
 
 
 def _rotate(request: JobRequest, workspace: Path) -> tuple[list[Path], dict[str, Any], list[str]]:
@@ -51,7 +33,7 @@ def _rotate(request: JobRequest, workspace: Path) -> tuple[list[Path], dict[str,
         raise ToolError("UNREADABLE_PDF", f"Could not read {pdf_path.name}: {exc}") from exc
 
     page_count = len(reader.pages)
-    target_pages = _resolve_pages(request.options.get("pages"), page_count)
+    target_pages = resolve_pages(request.options.get("pages"), page_count)
 
     writer = PdfWriter()
     for index, page in enumerate(reader.pages, start=1):
