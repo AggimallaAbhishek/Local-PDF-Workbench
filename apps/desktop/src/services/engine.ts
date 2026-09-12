@@ -1,9 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import type { JobRequest, JobResult } from "../types/job";
 
-// Wired up in Sprint 2 once the `run_job` Tauri command and the Python
-// engine subprocess runner exist. Kept here now so feature modules can be
-// built against a stable interface.
+// Calls the Rust `run_job` command, which spawns the Python engine as a
+// subprocess and returns its JobResult. See apps/desktop/src-tauri/src/job.rs.
 export async function runJob(request: JobRequest): Promise<JobResult> {
   return invoke<JobResult>("run_job", { request });
 }
