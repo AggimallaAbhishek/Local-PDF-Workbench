@@ -16,11 +16,11 @@ export const TOOLS: ToolDefinition[] = [
 
   // Phase 2
   { id: "annotate", name: "Edit & Annotate", description: "Add text, shapes, and comments.", category: "edit", stage: "phase2", available: false },
-  { id: "redact", name: "Redact PDF", description: "Permanently remove sensitive content.", category: "security", stage: "phase2", available: false },
-  { id: "crop", name: "Crop PDF", description: "Trim page margins.", category: "edit", stage: "phase2", available: false },
-  { id: "repair", name: "Repair PDF", description: "Attempt to fix a damaged document.", category: "optimize", stage: "phase2", available: false },
-  { id: "protect", name: "Protect PDF", description: "Encrypt with a password.", category: "security", stage: "phase2", available: false },
-  { id: "unlock", name: "Unlock PDF", description: "Remove a password you already know.", category: "security", stage: "phase2", available: false },
+  { id: "redact", name: "Redact PDF", description: "Permanently remove sensitive content.", category: "security", stage: "phase2", available: true },
+  { id: "crop", name: "Crop PDF", description: "Trim page margins.", category: "edit", stage: "phase2", available: true },
+  { id: "repair", name: "Repair PDF", description: "Attempt to fix a damaged document.", category: "optimize", stage: "phase2", available: true },
+  { id: "protect", name: "Protect PDF", description: "Encrypt with a password.", category: "security", stage: "phase2", available: true },
+  { id: "unlock", name: "Unlock PDF", description: "Remove a password you already know.", category: "security", stage: "phase2", available: true },
   { id: "sign", name: "Sign PDF", description: "Add a signature to a document.", category: "security", stage: "phase2", available: false },
   { id: "compare", name: "Compare PDFs", description: "Highlight differences between two documents.", category: "edit", stage: "phase2", available: false },
   { id: "pdf-a", name: "Convert to PDF/A", description: "Prepare a document for long-term archiving.", category: "convert", stage: "phase2", available: false },
