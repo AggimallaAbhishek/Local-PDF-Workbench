@@ -27,3 +27,32 @@ pub fn reveal_output_path(path: String) -> Result<(), String> {
     }
     tauri_plugin_opener::reveal_item_in_dir(&path).map_err(|e| e.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Only the guard clause is tested here, not the success path: that path
+    // launches a real OS app (Finder/Preview), which isn't something an
+    // automated test should trigger as a side effect.
+
+    #[test]
+    fn open_output_path_rejects_nonexistent_path() {
+        let result = open_output_path("/definitely/does/not/exist.pdf".to_string());
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn reveal_output_path_rejects_nonexistent_path() {
+        let result = reveal_output_path("/definitely/does/not/exist.pdf".to_string());
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn open_output_path_rejects_a_directory() {
+        // A directory exists but is_file() is false - reveal_item_in_dir
+        // expects a file inside a directory, not the directory itself.
+        let result = open_output_path(std::env::temp_dir().to_string_lossy().into_owned());
+        assert!(result.is_err());
+    }
+}
