@@ -4,10 +4,10 @@ import type { ToolDefinition } from "../types/tool";
 // true as each tool's feature module + engine implementation lands.
 export const TOOLS: ToolDefinition[] = [
   // MVP
-  { id: "merge", name: "Merge PDF", description: "Combine multiple PDFs into one document.", category: "organize", stage: "mvp", available: false },
-  { id: "split", name: "Split PDF", description: "Extract pages into separate documents.", category: "organize", stage: "mvp", available: false },
-  { id: "rotate", name: "Rotate PDF", description: "Rotate one or more pages.", category: "organize", stage: "mvp", available: false },
-  { id: "organize", name: "Organize Pages", description: "Reorder, insert, or remove pages.", category: "organize", stage: "mvp", available: false },
+  { id: "merge", name: "Merge PDF", description: "Combine multiple PDFs into one document.", category: "organize", stage: "mvp", available: true },
+  { id: "split", name: "Split PDF", description: "Extract pages into separate documents.", category: "organize", stage: "mvp", available: true },
+  { id: "rotate", name: "Rotate PDF", description: "Rotate one or more pages.", category: "organize", stage: "mvp", available: true },
+  { id: "organize", name: "Organize Pages", description: "Reorder, insert, or remove pages.", category: "organize", stage: "mvp", available: true },
   { id: "compress", name: "Compress PDF", description: "Reduce file size with adjustable quality.", category: "optimize", stage: "mvp", available: false },
   { id: "watermark", name: "Add Watermark", description: "Stamp text or an image onto every page.", category: "edit", stage: "mvp", available: false },
   { id: "page-numbers", name: "Add Page Numbers", description: "Insert page numbers with custom position and style.", category: "edit", stage: "mvp", available: false },

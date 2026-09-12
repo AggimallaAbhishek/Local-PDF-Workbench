@@ -4,9 +4,9 @@ import { open } from "@tauri-apps/plugin-dialog";
 // §6). Returns absolute local paths only — the UI never touches file bytes
 // directly, it hands paths to `runJob` (see ./engine.ts).
 
-export async function pickInputFiles(): Promise<string[]> {
+export async function pickInputFiles(multiple = true): Promise<string[]> {
   const selection = await open({
-    multiple: true,
+    multiple,
     directory: false,
     filters: [{ name: "PDF", extensions: ["pdf"] }],
   });

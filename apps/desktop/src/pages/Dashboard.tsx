@@ -7,7 +7,11 @@ import type { ToolDefinition } from "../types/tool";
 
 const APP_VERSION = "0.1.0";
 
-export function Dashboard() {
+interface DashboardProps {
+  onSelectTool: (tool: ToolDefinition) => void;
+}
+
+export function Dashboard({ onSelectTool }: DashboardProps) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ToolDefinition["category"] | "all">("all");
 
@@ -22,13 +26,6 @@ export function Dashboard() {
       return matchesCategory && matchesQuery;
     });
   }, [query, category]);
-
-  function handleSelect(tool: ToolDefinition) {
-    // Feature workspaces land in Sprint 3+; for now this is a no-op for
-    // unavailable tools (the button is disabled) and a placeholder hook
-    // point for available ones.
-    console.log("open tool workspace:", tool.id);
-  }
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
@@ -46,7 +43,7 @@ export function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredTools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} onSelect={handleSelect} />
+              <ToolCard key={tool.id} tool={tool} onSelect={onSelectTool} />
             ))}
           </div>
         )}
