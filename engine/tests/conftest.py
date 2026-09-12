@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+from PIL import Image
 from pypdf import PdfWriter
 
 
@@ -25,3 +26,15 @@ def output_dir(tmp_path):
     d = tmp_path / "out"
     d.mkdir()
     return str(d)
+
+
+@pytest.fixture
+def make_image(tmp_path):
+    """Writes a solid-color image and returns its path as a string."""
+
+    def _make(name: str, size: tuple[int, int] = (100, 100), color=(200, 100, 50)) -> str:
+        path = tmp_path / name
+        Image.new("RGB", size, color).save(path)
+        return str(path)
+
+    return _make

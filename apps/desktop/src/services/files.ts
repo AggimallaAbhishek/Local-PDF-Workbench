@@ -14,6 +14,16 @@ export async function pickInputFiles(multiple = true): Promise<string[]> {
   return Array.isArray(selection) ? selection : [selection];
 }
 
+export async function pickInputImages(multiple = true): Promise<string[]> {
+  const selection = await open({
+    multiple,
+    directory: false,
+    filters: [{ name: "Image", extensions: ["jpg", "jpeg", "png"] }],
+  });
+  if (selection === null) return [];
+  return Array.isArray(selection) ? selection : [selection];
+}
+
 export async function pickOutputDir(): Promise<string | null> {
   const selection = await open({
     multiple: false,

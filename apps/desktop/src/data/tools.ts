@@ -8,11 +8,11 @@ export const TOOLS: ToolDefinition[] = [
   { id: "split", name: "Split PDF", description: "Extract pages into separate documents.", category: "organize", stage: "mvp", available: true },
   { id: "rotate", name: "Rotate PDF", description: "Rotate one or more pages.", category: "organize", stage: "mvp", available: true },
   { id: "organize", name: "Organize Pages", description: "Reorder, insert, or remove pages.", category: "organize", stage: "mvp", available: true },
-  { id: "compress", name: "Compress PDF", description: "Reduce file size with adjustable quality.", category: "optimize", stage: "mvp", available: false },
-  { id: "watermark", name: "Add Watermark", description: "Stamp text or an image onto every page.", category: "edit", stage: "mvp", available: false },
-  { id: "page-numbers", name: "Add Page Numbers", description: "Insert page numbers with custom position and style.", category: "edit", stage: "mvp", available: false },
-  { id: "pdf-to-jpg", name: "PDF to JPG", description: "Export pages as JPG images.", category: "convert", stage: "mvp", available: false },
-  { id: "jpg-to-pdf", name: "JPG to PDF", description: "Combine images into a single PDF.", category: "convert", stage: "mvp", available: false },
+  { id: "compress", name: "Compress PDF", description: "Reduce file size with adjustable quality.", category: "optimize", stage: "mvp", available: true },
+  { id: "watermark", name: "Add Watermark", description: "Stamp text or an image onto every page.", category: "edit", stage: "mvp", available: true },
+  { id: "page-numbers", name: "Add Page Numbers", description: "Insert page numbers with custom position and style.", category: "edit", stage: "mvp", available: true },
+  { id: "pdf-to-jpg", name: "PDF to JPG", description: "Export pages as JPG images.", category: "convert", stage: "mvp", available: true },
+  { id: "jpg-to-pdf", name: "JPG to PDF", description: "Combine images into a single PDF.", category: "convert", stage: "mvp", available: true },
 
   // Phase 2
   { id: "annotate", name: "Edit & Annotate", description: "Add text, shapes, and comments.", category: "edit", stage: "phase2", available: false },
