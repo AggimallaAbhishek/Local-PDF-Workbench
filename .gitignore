@@ -1,0 +1,20 @@
+# OS
+.DS_Store
+
+# Node / frontend
+node_modules/
+dist/
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
+
+# Python engine
+engine/.venv/
+**/__pycache__/
+*.pyc
+
+# Local data (never committed — see PLAN.md §10)
+models/*
+!models/.gitkeep
+tests/fixtures/*
+!tests/fixtures/.gitkeep
+*.log

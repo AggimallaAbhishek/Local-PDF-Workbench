@@ -1,0 +1,26 @@
+[project]
+name = "local-pdf-workbench-engine"
+version = "0.1.0"
+description = "Local processing engine for Local PDF Workbench (PDF manipulation, OCR, conversion)"
+authors = [
+    { name = "Aggimalla Abhishek", email = "aggimallaabhishek@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pikepdf>=10.13.0.post1",
+    "pillow>=12.3.0",
+    "pymupdf>=1.28.2",
+    "pypdf>=6.18.1",
+    "pytesseract>=0.3.13",
+    "reportlab>=5.0.1",
+]
+
+[project.scripts]
+local-pdf-workbench-engine = "engine.app.main:main"
+
+[tool.uv.build-backend]
+module-name = "engine"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
