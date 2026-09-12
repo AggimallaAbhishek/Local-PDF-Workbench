@@ -33,7 +33,16 @@ def main() -> None:
         raw_request = json.loads(sys.stdin.read())
         result = handle(raw_request)
     except Exception as exc:  # noqa: BLE001 - top-level boundary, must not crash silently
-        result = JobResult.failed(raw_request.get("jobId", "unknown"), code="ENGINE_ERROR", message=str(exc))
+        # Unlike a tool's curated ToolError, this catches literally anything,
+        # so exc's own text is not trusted to be free of document content -
+        # only the exception type crosses this boundary. Full detail still
+        # goes to stderr for local debugging.
+        print(f"{type(exc).__name__}: {exc}", file=sys.stderr)
+        result = JobResult.failed(
+            raw_request.get("jobId", "unknown"),
+            code="ENGINE_ERROR",
+            message=f"An unexpected internal error occurred ({type(exc).__name__}).",
+        )
     json.dump(result.to_dict(), sys.stdout)
 
 

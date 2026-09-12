@@ -1,5 +1,17 @@
-import { openPath, revealItemInDir } from "@tauri-apps/plugin-opener";
+import { invoke } from "@tauri-apps/api/core";
 import type { JobResult } from "../../types/job";
+
+// Calls our own mediated Rust commands rather than the opener plugin's JS
+// API directly: that plugin's open_path/reveal_item_in_dir have no scope
+// mechanism at all, so granting them straight to the webview would let any
+// frontend code act on an arbitrary path. See src-tauri/src/output.rs.
+function openOutputPath(path: string) {
+  return invoke("open_output_path", { path });
+}
+
+function revealOutputPath(path: string) {
+  return invoke("reveal_output_path", { path });
+}
 
 interface ResultPanelProps {
   running: boolean;
@@ -38,14 +50,14 @@ export function ResultPanel({ running, result }: ResultPanelProps) {
             <span className="flex shrink-0 gap-2">
               <button
                 type="button"
-                onClick={() => openPath(path)}
+                onClick={() => openOutputPath(path)}
                 className="rounded-md border border-emerald-300 px-2 py-0.5 text-xs font-medium hover:bg-emerald-100 dark:border-emerald-800 dark:hover:bg-emerald-900"
               >
                 Open
               </button>
               <button
                 type="button"
-                onClick={() => revealItemInDir(path)}
+                onClick={() => revealOutputPath(path)}
                 className="rounded-md border border-emerald-300 px-2 py-0.5 text-xs font-medium hover:bg-emerald-100 dark:border-emerald-800 dark:hover:bg-emerald-900"
               >
                 Show in folder
