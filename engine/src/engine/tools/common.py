@@ -41,6 +41,18 @@ def require_input_pdf(path: str) -> Path:
     return p
 
 
+SUPPORTED_IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png"}
+
+
+def require_input_image(path: str) -> Path:
+    p = Path(path)
+    if not p.is_file():
+        raise ToolError("INPUT_NOT_FOUND", f"Input file not found: {p.name}")
+    if p.suffix.lower() not in SUPPORTED_IMAGE_SUFFIXES:
+        raise ToolError("INPUT_NOT_IMAGE", f"Unsupported image type: {p.name}")
+    return p
+
+
 def require_output_dir(path: str) -> Path:
     p = Path(path)
     if p.exists() and not p.is_dir():

@@ -21,10 +21,10 @@ export const TOOLS: ToolDefinition[] = [
   { id: "repair", name: "Repair PDF", description: "Attempt to fix a damaged document.", category: "optimize", stage: "phase2", available: true },
   { id: "protect", name: "Protect PDF", description: "Encrypt with a password.", category: "security", stage: "phase2", available: true },
   { id: "unlock", name: "Unlock PDF", description: "Remove a password you already know.", category: "security", stage: "phase2", available: true },
-  { id: "sign", name: "Sign PDF", description: "Add a signature to a document.", category: "security", stage: "phase2", available: false },
-  { id: "compare", name: "Compare PDFs", description: "Highlight differences between two documents.", category: "edit", stage: "phase2", available: false },
-  { id: "pdf-a", name: "Convert to PDF/A", description: "Prepare a document for long-term archiving.", category: "convert", stage: "phase2", available: false },
-  { id: "scan-import", name: "Import Scan", description: "Turn a scanned image into a clean PDF.", category: "convert", stage: "phase2", available: false },
+  { id: "sign", name: "Sign PDF", description: "Add a signature to a document.", category: "security", stage: "phase2", available: true },
+  { id: "compare", name: "Compare PDFs", description: "Highlight differences between two documents.", category: "edit", stage: "phase2", available: true },
+  { id: "pdf-a", name: "Convert to PDF/A", description: "Prepare a document for long-term archiving.", category: "convert", stage: "phase2", available: true },
+  { id: "scan-import", name: "Import Scan", description: "Turn a scanned image into a clean PDF.", category: "convert", stage: "phase2", available: true },
 
   // Phase 3
   { id: "pdf-to-word", name: "PDF to Word", description: "Convert to an editable DOCX file.", category: "convert", stage: "phase3", available: false },

@@ -1,4 +1,4 @@
-import { revealItemInDir } from "@tauri-apps/plugin-opener";
+import { openPath, revealItemInDir } from "@tauri-apps/plugin-opener";
 import type { JobResult } from "../../types/job";
 
 interface ResultPanelProps {
@@ -35,13 +35,22 @@ export function ResultPanel({ running, result }: ResultPanelProps) {
             <span className="truncate" title={path}>
               {path}
             </span>
-            <button
-              type="button"
-              onClick={() => revealItemInDir(path)}
-              className="shrink-0 rounded-md border border-emerald-300 px-2 py-0.5 text-xs font-medium hover:bg-emerald-100 dark:border-emerald-800 dark:hover:bg-emerald-900"
-            >
-              Show in folder
-            </button>
+            <span className="flex shrink-0 gap-2">
+              <button
+                type="button"
+                onClick={() => openPath(path)}
+                className="rounded-md border border-emerald-300 px-2 py-0.5 text-xs font-medium hover:bg-emerald-100 dark:border-emerald-800 dark:hover:bg-emerald-900"
+              >
+                Open
+              </button>
+              <button
+                type="button"
+                onClick={() => revealItemInDir(path)}
+                className="rounded-md border border-emerald-300 px-2 py-0.5 text-xs font-medium hover:bg-emerald-100 dark:border-emerald-800 dark:hover:bg-emerald-900"
+              >
+                Show in folder
+              </button>
+            </span>
           </li>
         ))}
       </ul>

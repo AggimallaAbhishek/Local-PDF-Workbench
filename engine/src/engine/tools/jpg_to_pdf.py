@@ -10,18 +10,7 @@ from typing import Any
 from PIL import Image
 
 from engine.jobs.contract import JobRequest, JobResult
-from engine.tools.common import ToolError, output_filename, run_tool
-
-SUPPORTED_SUFFIXES = {".jpg", ".jpeg", ".png"}
-
-
-def _require_input_image(path: str) -> Path:
-    p = Path(path)
-    if not p.is_file():
-        raise ToolError("INPUT_NOT_FOUND", f"Input file not found: {p.name}")
-    if p.suffix.lower() not in SUPPORTED_SUFFIXES:
-        raise ToolError("INPUT_NOT_IMAGE", f"Unsupported image type: {p.name}")
-    return p
+from engine.tools.common import ToolError, output_filename, require_input_image, run_tool
 
 
 def _jpg_to_pdf(request: JobRequest, workspace: Path) -> tuple[list[Path], dict[str, Any], list[str]]:
@@ -30,7 +19,7 @@ def _jpg_to_pdf(request: JobRequest, workspace: Path) -> tuple[list[Path], dict[
 
     images = []
     for raw_path in request.inputs:
-        image_path = _require_input_image(raw_path)
+        image_path = require_input_image(raw_path)
         try:
             img = Image.open(image_path)
             img.load()
