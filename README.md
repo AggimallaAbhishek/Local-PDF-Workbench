@@ -6,7 +6,9 @@ telemetry, ever, for core functionality. The app must be fully usable with the
 network interface disabled.
 
 Full architecture, job contract, and roadmap live in [PLAN.md](PLAN.md). This
-file tracks what's actually built.
+file tracks what's actually built. For using the app itself — supported
+formats, known limitations, troubleshooting — see
+[docs/user-guide.md](docs/user-guide.md).
 
 ## Stack
 
@@ -154,9 +156,20 @@ Python engine itself never attempts a connection — and a live `lsof`
 socket check during a real LibreOffice conversion and a real Tesseract OCR
 run found no open network sockets from either external binary.
 
-**Not yet done:** user-facing docs (supported formats, limitations,
-troubleshooting) and packaging (an actual `tauri build` producing a real
-installer hasn't been run yet).
+**User-facing docs** now live at [docs/user-guide.md](docs/user-guide.md):
+supported formats, known limitations per tool, and a troubleshooting table
+keyed to every error code the engine actually returns.
+
+**Packaging**: `npm run tauri build` produces a real `.app` and `.dmg`
+(`apps/desktop/src-tauri/target/release/bundle/`), ad-hoc signed since
+there's no Apple Developer certificate configured. Verified beyond "it
+compiled": launched the built `.app` directly, confirmed the process stayed
+running (not an immediate post-launch crash, which is how a broken Tauri
+bundle typically fails), checked for crash reports (none), and quit it
+cleanly. Not yet done: an actual install-from-`.dmg` walkthrough, and
+Windows/Linux bundles (this was only built and verified on macOS/arm64).
+
+Phase 5 is now functionally complete for a single-platform (macOS) release.
 
 ## Repository layout
 
