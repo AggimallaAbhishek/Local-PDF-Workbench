@@ -107,7 +107,7 @@ than anything else in this app, and not something to add without a
 separate decision on model choice/size/hardware requirements (PLAN.md
 itself flags this as a risk: "Local AI too heavy").
 
-### Hardening pass
+### Code-review hardening pass
 A code review (Standards + Spec axes against PLAN.md) surfaced four real
 issues, since fixed and covered by regression tests:
 - output moves are now atomic even when the output folder is on a different
@@ -123,6 +123,40 @@ Known gap, not yet addressed: there's no persistent Job Manager (progress
 tracking, cancellation, SQLite job history) — `run_job` is currently a
 one-shot blocking call per PLAN.md §3's simpler description, not the fuller
 Job Manager described in §3's architecture diagram.
+
+### Phase 5 — Hardening (in progress)
+
+**Security review** (dedicated pass, separate from the code review above):
+a threat-model-aware review across command injection, path traversal,
+Tauri capability scope, unsafe deserialization, and data exposure found one
+real defect — `output_filename()` didn't sanitize the `outputFilename` job
+option, so an absolute path or `../` segments could steer a tool's write
+(and later delete) outside the intended output directory. Fixed: it's now
+reduced to a basename before use, with regression tests covering absolute
+paths, traversal segments, and an end-to-end check that a malicious value
+can't escape `outputDir`. Several other candidates (pypdf's default RC4-128
+PDF encryption, LibreOffice macro execution in headless conversion, local
+file references in HTML→PDF) were investigated and rejected after
+verification — none were concretely exploitable in this app's actual
+single-user local threat model (see the session record for the full
+reasoning per candidate).
+
+**Network/offline verification**: confirmed zero network capability at
+every layer — no HTTP/updater plugin in the Rust `Cargo.toml`, no
+network-capable npm dependencies or `fetch`/`XMLHttpRequest`/`WebSocket`
+calls anywhere in the frontend, no remote font/CDN references, and no
+network imports or calls anywhere in the Python engine or its dependencies
+(pypdf/pikepdf/pymupdf/Pillow/reportlab/pytesseract/markdown are all local
+processing libraries). Verified at runtime, not just by reading code: the
+entire 104-test engine suite passes with `socket.socket.connect` and
+`socket.create_connection` both patched to raise on any call — proving the
+Python engine itself never attempts a connection — and a live `lsof`
+socket check during a real LibreOffice conversion and a real Tesseract OCR
+run found no open network sockets from either external binary.
+
+**Not yet done:** user-facing docs (supported formats, limitations,
+troubleshooting) and packaging (an actual `tauri build` producing a real
+installer hasn't been run yet).
 
 ## Repository layout
 

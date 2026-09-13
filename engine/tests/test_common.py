@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 from engine.jobs.contract import JobRequest
-from engine.tools.common import run_tool
+from engine.tools.common import output_filename, run_tool
 
 
 def _request(**overrides) -> JobRequest:
@@ -126,3 +126,47 @@ def test_finalize_accepts_a_real_pdf(make_pdf, output_dir):
     result = run_tool(_request(output_dir=output_dir), write_real_pdf)
 
     assert result.status == "success"
+
+
+def test_output_filename_strips_absolute_paths_to_a_basename():
+    """An `outputFilename` option is attacker/self-controllable input from a
+    job request. Path's own "/" operator discards everything to the left of
+    an absolute right-hand side (Path("/tmp/x") / "/etc/passwd" ==
+    Path("/etc/passwd")), so without this, a tool would write - and later
+    delete - whatever absolute path was named here instead of a file inside
+    outputDir.
+    """
+    assert output_filename({"outputFilename": "/etc/passwd"}, "outputFilename", "out.pdf") == "passwd.pdf"
+
+
+def test_output_filename_strips_parent_directory_segments():
+    assert output_filename({"outputFilename": "../../evil"}, "outputFilename", "out.pdf") == "evil.pdf"
+
+
+def test_output_filename_falls_back_to_default_for_degenerate_values():
+    assert output_filename({"outputFilename": ".."}, "outputFilename", "out.pdf") == "out.pdf"
+    assert output_filename({"outputFilename": ""}, "outputFilename", "out.pdf") == "out.pdf"
+
+
+def test_finalize_ignores_a_path_escaping_outputfilename(make_pdf, output_dir, tmp_path):
+    """End-to-end: a malicious outputFilename must not let a tool write
+    outside outputDir, even though nothing but the same local user controls
+    this value today."""
+    target = tmp_path / "should-not-be-touched.pdf"
+    target.write_text("pre-existing content")
+    real_pdf_bytes = Path(make_pdf("source.pdf", pages=1)).read_bytes()
+
+    def write_with_malicious_name(request: JobRequest, workspace: Path):
+        filename = output_filename(request.options, "outputFilename", "safe.pdf")
+        out = workspace / filename
+        out.write_bytes(real_pdf_bytes)
+        return [out], {}, []
+
+    result = run_tool(
+        _request(output_dir=output_dir, options={"outputFilename": str(target)}),
+        write_with_malicious_name,
+    )
+
+    assert result.status == "success"
+    assert target.read_text() == "pre-existing content"
+    assert Path(result.outputs[0]).parent == Path(output_dir)

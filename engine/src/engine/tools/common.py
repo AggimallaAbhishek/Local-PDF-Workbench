@@ -89,10 +89,17 @@ def resolve_pages(raw_pages: Any, page_count: int) -> set[int]:
 
 
 def output_filename(options: dict[str, Any], key: str, default: str) -> str:
-    name = options.get(key) or default
-    if not str(name).lower().endswith(".pdf"):
+    # Only ever use the basename: an absolute path or "../" segments in a
+    # job's options must not be able to steer where a tool writes (Path's
+    # own "/" operator discards everything to the left of an absolute
+    # right-hand side, so an unsanitized value here would let an
+    # `outputFilename` option target an arbitrary path on disk).
+    name = Path(str(options.get(key) or default)).name
+    if not name or name in (".", ".."):
+        name = Path(default).name
+    if not name.lower().endswith(".pdf"):
         name = f"{name}.pdf"
-    return str(name)
+    return name
 
 
 @contextmanager
