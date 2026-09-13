@@ -27,6 +27,7 @@ from engine.tools.redact import redact
 from engine.tools.repair import repair
 from engine.tools.rotate import rotate
 from engine.tools.scan_import import scan_import
+from engine.tools.search import search
 from engine.tools.sign import sign
 from engine.tools.split import split
 from engine.tools.unlock import unlock
@@ -63,6 +64,7 @@ REGISTRY: dict[str, ToolHandler] = {
     "html-to-pdf": html_to_pdf,
     "markdown": markdown_to_pdf,
     "forms": forms,
+    "search": search,
 }
 
 

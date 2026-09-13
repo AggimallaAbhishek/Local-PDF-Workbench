@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { SimpleConversionWorkspace } from "../components/workspace/SimpleConversionWorkspace";
 import { AnnotateWorkspace } from "../features/annotate/AnnotateWorkspace";
+import { BatchWorkspace } from "../features/batch/BatchWorkspace";
 import { CompareWorkspace } from "../features/compare/CompareWorkspace";
 import { CompressWorkspace } from "../features/compress/CompressWorkspace";
 import { CropWorkspace } from "../features/crop/CropWorkspace";
@@ -17,10 +18,12 @@ import { RedactWorkspace } from "../features/redact/RedactWorkspace";
 import { RepairWorkspace } from "../features/repair/RepairWorkspace";
 import { RotateWorkspace } from "../features/rotate/RotateWorkspace";
 import { ScanImportWorkspace } from "../features/scan-import/ScanImportWorkspace";
+import { SearchWorkspace } from "../features/search/SearchWorkspace";
 import { SignWorkspace } from "../features/sign/SignWorkspace";
 import { SplitWorkspace } from "../features/split/SplitWorkspace";
 import { UnlockWorkspace } from "../features/unlock/UnlockWorkspace";
 import { WatermarkWorkspace } from "../features/watermark/WatermarkWorkspace";
+import { WorkflowBuilderWorkspace } from "../features/workflow-builder/WorkflowBuilderWorkspace";
 
 interface WorkspaceProps {
   onBack: () => void;
@@ -104,6 +107,9 @@ const WORKSPACES: Record<string, ComponentType<WorkspaceProps>> = {
       runLabel="Convert to PDF"
     />
   ),
+  batch: BatchWorkspace,
+  "workflow-builder": WorkflowBuilderWorkspace,
+  search: SearchWorkspace,
 };
 
 interface ToolWorkspaceProps extends WorkspaceProps {

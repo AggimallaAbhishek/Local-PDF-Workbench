@@ -28,9 +28,10 @@ job (see `apps/desktop/src-tauri/src/job.rs` and
 
 ## Status
 
-**Sprints 1–4 (MVP), all of Phase 2, and most of Phase 3 are done.** 26 of
-PLAN.md's 29 tools work end to end, backed by 94 Python tests and 4 Rust
-tests, all passing.
+**Sprints 1–4 (MVP), all of Phase 2, most of Phase 3, and most of the
+Advanced tier are done.** 29 of PLAN.md's 34 tools work end to end (26 real
+engine tools + Batch/Workflow Builder, which reuse the others, + Search),
+backed by 100 Python tests and 6 Rust tests, all passing.
 
 ### Sprint 1 — Desktop shell
 Tauri + React dashboard, category filters, search, tool cards, privacy
@@ -82,8 +83,29 @@ fail with "no export filter"). Shipping these would mean either failing
 every time or producing something misleadingly poor, so they're left
 unavailable rather than faked.
 
-**Not yet built:** the Advanced tier (local AI, batch processing, local
-search).
+### Advanced tier — Workflow Builder, Batch Processing, Search (3 of 5)
+None of these needed new engine tools — they're frontend orchestration over
+the existing job runner:
+- **Batch Processing** runs one tool across every matching file in a folder,
+  sequentially, with live per-file progress.
+- **Workflow Builder** chains steps where each one's output feeds the next
+  one's input, with intermediate files landing in the app's own cache dir
+  (only the final step writes to the user's chosen folder).
+- **Search** does an on-demand full-text scan across a folder's PDFs (no
+  persistent index — that's a deliberate scope cut) and renders an HTML
+  report plus inline results.
+
+Both Batch and Workflow Builder share one declarative tool catalog
+(`features/shared/pipelineTools.ts`) covering every tool whose options are
+flat key/value pairs — a tool like Crop, whose options nest under
+`margins`, doesn't fit that shape and isn't included there (its dedicated
+workspace still works normally).
+
+**Deliberately not built: Summarize, Translate.** Both need a local LLM
+runtime plus a multi-GB downloaded model — a different kind of dependency
+than anything else in this app, and not something to add without a
+separate decision on model choice/size/hardware requirements (PLAN.md
+itself flags this as a risk: "Local AI too heavy").
 
 ### Hardening pass
 A code review (Standards + Spec axes against PLAN.md) surfaced four real
@@ -106,12 +128,12 @@ Job Manager described in §3's architecture diagram.
 
 ```
 apps/desktop/          Tauri + React frontend
-  src/features/         one folder per tool (workspace UI)
+  src/features/         one folder per tool (workspace UI); shared/pipelineTools.ts (Batch/Workflow catalog)
   src/services/         Tauri command wrappers (engine, files, preview)
-  src-tauri/src/         job.rs (job runner), output.rs (mediated file open)
+  src-tauri/src/         job.rs (job runner), output.rs (mediated file open), directory.rs (folder listing)
 engine/                 Python processing engine
   src/engine/tools/      one module per tool + shared plumbing (common.py, office_convert.py)
-  tests/                 pytest suite (94 tests)
+  tests/                 pytest suite (100 tests)
 PLAN.md                 full architecture, job contract, roadmap, security requirements
 ```
 

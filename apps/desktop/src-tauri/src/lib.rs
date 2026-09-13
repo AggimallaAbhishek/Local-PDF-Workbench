@@ -1,3 +1,4 @@
+mod directory;
 mod job;
 mod output;
 
@@ -9,7 +10,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             job::run_job,
             output::open_output_path,
-            output::reveal_output_path
+            output::reveal_output_path,
+            directory::list_files_in_dir
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

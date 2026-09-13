@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 
 // Native pickers for a tool workspace's Input/Actions panels (see PLAN.md
@@ -26,11 +27,21 @@ export async function pickInputImages(multiple = true): Promise<string[]> {
   return pickFilesWithExtensions("Image", ["jpg", "jpeg", "png"], multiple);
 }
 
-export async function pickOutputDir(): Promise<string | null> {
+export async function pickFolder(): Promise<string | null> {
   const selection = await open({
     multiple: false,
     directory: true,
   });
   if (selection === null) return null;
   return Array.isArray(selection) ? (selection[0] ?? null) : selection;
+}
+
+export async function pickOutputDir(): Promise<string | null> {
+  return pickFolder();
+}
+
+/** Lists files directly inside `dir` (non-recursive) matching one of
+ * `extensions` (no leading dot, e.g. "pdf"), case-insensitively. */
+export async function listFilesInDir(dir: string, extensions: string[]): Promise<string[]> {
+  return invoke<string[]>("list_files_in_dir", { dir, extensions });
 }
