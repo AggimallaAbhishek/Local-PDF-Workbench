@@ -34,7 +34,7 @@ job (see `apps/desktop/src-tauri/src/job.rs` and
 **Sprints 1–4 (MVP), all of Phase 2, most of Phase 3, all of the Advanced
 tier, and Phase 5 hardening are done.** 31 of PLAN.md's 34 tools work end
 to end (28 real engine tools + Batch/Workflow Builder, which reuse the
-others, + Search), backed by 109 Python tests and 6 Rust tests, all
+others, + Search), backed by 109 Python tests and 12 Rust tests, all
 passing.
 
 ### Sprint 1 — Desktop shell
@@ -130,10 +130,36 @@ issues, since fixed and covered by regression tests:
 - "Open" / "Show in folder" are now mediated by two narrowly-scoped Rust
   commands instead of an unscoped plugin permission
 
-Known gap, not yet addressed: there's no persistent Job Manager (progress
-tracking, cancellation, SQLite job history) — `run_job` is currently a
-one-shot blocking call per PLAN.md §3's simpler description, not the fuller
-Job Manager described in §3's architecture diagram.
+### Job Manager (PLAN.md §3)
+`run_job` is still a one-shot subprocess per job (an intentional
+architecture choice from Sprint 2 — a crashed job can never leak state into
+the next one), but the pieces §3's architecture diagram calls for around it
+are now real:
+- **Persisted history** — every job is recorded to a SQLite database in the
+  app's own data directory (`jobs.db`, one row per job) when it starts and
+  updated with its final status when it finishes. A "History" page (from
+  the dashboard's top nav) lists past and in-flight jobs with their
+  outputs, reachable via the same "Open"/"Show in folder" actions as a
+  regular job result.
+- **Cancellation** — a running job's OS process can be looked up by job ID
+  and killed. Verified with a real test, not just logic review: spawns a
+  genuinely long-running process, registers it, cancels it, and confirms
+  the process actually died (not just that the code *would* have sent a
+  signal) — cross-platform via `kill -9` (Unix) / `taskkill` (Windows).
+  `run_job`'s own promise resolves with `status: "cancelled"` once this
+  happens, since the same await that's already waiting on the subprocess
+  naturally completes once it's killed — no separate signaling path needed
+  between the two Tauri commands.
+- This required moving `run_job` from a blocking `std::process::Command`
+  call to `tokio::process::Command` + `async fn`, so a `cancel_job`
+  invocation can run concurrently with an in-flight `run_job` rather than
+  the whole IPC layer being blocked until the job finishes.
+
+Not implemented: fine-grained progress percentages (e.g. "page 3 of 10").
+That needs the engine to emit incremental events over the subprocess
+boundary rather than one JSON blob at the end - a real protocol change
+touching every tool, not just the Rust side, and a bigger scope than this
+pass.
 
 ### Phase 5 — Hardening (in progress)
 
@@ -187,7 +213,8 @@ Phase 5 is now functionally complete for a single-platform (macOS) release.
 apps/desktop/          Tauri + React frontend
   src/features/         one folder per tool (workspace UI); shared/pipelineTools.ts (Batch/Workflow catalog)
   src/services/         Tauri command wrappers (engine, files, preview)
-  src-tauri/src/         job.rs (job runner), output.rs (mediated file open), directory.rs (folder listing)
+  src-tauri/src/         job.rs (job runner + cancellation), jobs_db.rs (SQLite history),
+                         output.rs (mediated file open), directory.rs (folder listing)
 engine/                 Python processing engine
   src/engine/tools/      one module per tool + shared plumbing (common.py, office_convert.py, llm.py)
   tests/                 pytest suite (109 tests)

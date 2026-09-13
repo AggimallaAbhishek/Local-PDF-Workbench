@@ -9,9 +9,10 @@ const APP_VERSION = "0.1.0";
 
 interface DashboardProps {
   onSelectTool: (tool: ToolDefinition) => void;
+  onOpenHistory: () => void;
 }
 
-export function Dashboard({ onSelectTool }: DashboardProps) {
+export function Dashboard({ onSelectTool, onOpenHistory }: DashboardProps) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ToolDefinition["category"] | "all">("all");
 
@@ -29,7 +30,7 @@ export function Dashboard({ onSelectTool }: DashboardProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <TopNav query={query} onQueryChange={setQuery} version={APP_VERSION} />
+      <TopNav query={query} onQueryChange={setQuery} version={APP_VERSION} onOpenHistory={onOpenHistory} />
 
       <main className="mx-auto max-w-6xl px-6 py-8">
         <div className="mb-6 flex flex-col gap-4">
