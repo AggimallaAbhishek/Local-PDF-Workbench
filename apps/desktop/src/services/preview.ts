@@ -7,6 +7,11 @@ export interface PageThumbnail {
   src: string; // asset:// URL, safe to use as an <img> src
 }
 
+export interface PageSize {
+  width: number; // in PDF points, matching the page's own mediabox
+  height: number;
+}
+
 // Thumbnails are ephemeral UI aids, not user-requested job outputs, so they
 // render into the app's own cache dir rather than the output dir the user
 // picks for a job. `run_job`/the engine auto-create this directory.
@@ -17,14 +22,17 @@ async function previewCacheDir(): Promise<string> {
 
 export async function renderPageThumbnails(
   inputPath: string,
-  pages?: number[],
-): Promise<{ thumbnails: PageThumbnail[]; pageCount: number }> {
+  options?: { pages?: number[]; maxWidthPx?: number },
+): Promise<{ thumbnails: PageThumbnail[]; pageCount: number; pageSizes: Record<number, PageSize> }> {
   const outputDir = await previewCacheDir();
   const result = await runJob({
     jobId: crypto.randomUUID(),
     tool: "preview",
     inputs: [inputPath],
-    options: pages ? { pages } : {},
+    options: {
+      ...(options?.pages ? { pages: options.pages } : {}),
+      ...(options?.maxWidthPx ? { maxWidthPx: options.maxWidthPx } : {}),
+    },
     outputDir,
   });
 
@@ -38,8 +46,15 @@ export async function renderPageThumbnails(
     src: convertFileSrc(path),
   }));
 
+  const rawSizes = (result.metadata?.pageSizes as Record<string, [number, number]> | undefined) ?? {};
+  const pageSizes: Record<number, PageSize> = {};
+  for (const [key, [width, height]] of Object.entries(rawSizes)) {
+    pageSizes[Number(key)] = { width, height };
+  }
+
   return {
     thumbnails,
     pageCount: (result.metadata?.pageCount as number | undefined) ?? thumbnails.length,
+    pageSizes,
   };
 }

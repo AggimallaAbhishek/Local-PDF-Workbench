@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { AnnotateWorkspace } from "../features/annotate/AnnotateWorkspace";
 import { CompareWorkspace } from "../features/compare/CompareWorkspace";
 import { CompressWorkspace } from "../features/compress/CompressWorkspace";
 import { CropWorkspace } from "../features/crop/CropWorkspace";
@@ -41,6 +42,7 @@ const WORKSPACES: Record<string, ComponentType<WorkspaceProps>> = {
   compare: CompareWorkspace,
   "pdf-a": PdfAWorkspace,
   "scan-import": ScanImportWorkspace,
+  annotate: AnnotateWorkspace,
 };
 
 interface ToolWorkspaceProps extends WorkspaceProps {

@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from engine.jobs.contract import JobRequest, JobResult
+from engine.tools.annotate import annotate
 from engine.tools.compare import compare
 from engine.tools.compress import compress
 from engine.tools.crop import crop
@@ -47,6 +48,7 @@ REGISTRY: dict[str, ToolHandler] = {
     "compare": compare,
     "pdf-a": pdf_a,
     "scan-import": scan_import,
+    "annotate": annotate,
 }
 
 

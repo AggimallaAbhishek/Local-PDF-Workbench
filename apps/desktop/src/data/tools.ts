@@ -15,7 +15,7 @@ export const TOOLS: ToolDefinition[] = [
   { id: "jpg-to-pdf", name: "JPG to PDF", description: "Combine images into a single PDF.", category: "convert", stage: "mvp", available: true },
 
   // Phase 2
-  { id: "annotate", name: "Edit & Annotate", description: "Add text, shapes, and comments.", category: "edit", stage: "phase2", available: false },
+  { id: "annotate", name: "Edit & Annotate", description: "Add text, shapes, and comments.", category: "edit", stage: "phase2", available: true },
   { id: "redact", name: "Redact PDF", description: "Permanently remove sensitive content.", category: "security", stage: "phase2", available: true },
   { id: "crop", name: "Crop PDF", description: "Trim page margins.", category: "edit", stage: "phase2", available: true },
   { id: "repair", name: "Repair PDF", description: "Attempt to fix a damaged document.", category: "optimize", stage: "phase2", available: true },

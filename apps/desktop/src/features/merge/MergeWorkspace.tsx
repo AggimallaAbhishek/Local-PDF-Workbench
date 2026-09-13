@@ -34,7 +34,7 @@ export function MergeWorkspace({ onBack }: { onBack: () => void }) {
 
     for (const entry of entries) {
       try {
-        const { thumbnails } = await renderPageThumbnails(entry.path, [1]);
+        const { thumbnails } = await renderPageThumbnails(entry.path, { pages: [1] });
         setFiles((prev) =>
           prev.map((f) => (f.path === entry.path ? { ...f, thumbnail: thumbnails[0] } : f)),
         );

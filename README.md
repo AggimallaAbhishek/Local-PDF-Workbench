@@ -26,8 +26,8 @@ job (see `apps/desktop/src-tauri/src/job.rs` and
 
 ## Status
 
-**Sprints 1–4 (MVP) and most of Phase 2 are done.** 18 of PLAN.md's 29 tools
-work end to end, backed by 71 Python tests and 4 Rust tests, all passing.
+**Sprints 1–4 (MVP) and all of Phase 2 are done.** 19 of PLAN.md's 29 tools
+work end to end, backed by 79 Python tests and 4 Rust tests, all passing.
 
 ### Sprint 1 — Desktop shell
 Tauri + React dashboard, category filters, search, tool cards, privacy
@@ -46,20 +46,23 @@ result panel).
 ### Sprint 4 — MVP processing set complete
 compress · watermark · page numbers · PDF→JPG · JPG→PDF.
 
-### Phase 2 — Security & advanced document tools (9 of 10)
+### Phase 2 — Security & advanced document tools (10 of 10)
 crop · protect (encrypt) · unlock · repair · redact · sign · compare ·
-convert to PDF/A · scan import.
+convert to PDF/A · scan import · edit & annotate.
 
 Redact uses PyMuPDF's redaction API, verified to actually strip the
 underlying text (not just paint over it) — checked against both extracted
 text and the saved file's raw bytes. PDF/A conversion is explicitly
 best-effort: it embeds identification metadata and a color output intent but
-doesn't validate full conformance, and says so on every run.
+doesn't validate full conformance, and says so on every run. Edit & Annotate
+is the one interactive tool in the app — an SVG canvas over the page preview
+for placing text, rectangles, and lines, converted to PDF point coordinates
+and baked permanently into the page via the same overlay pattern as
+watermark/page numbers (not interactive PDF annotation objects, which render
+inconsistently across viewers).
 
-**Not yet built:** Edit & Annotate (needs a genuinely different UI — an
-interactive canvas — not a variant of the single-file-in/options/output-dir
-pattern every other tool here uses) and all of Phase 3 (Office
-conversion, OCR, Markdown) and the Advanced tier (local AI, batch, search).
+**Not yet built:** Phase 3 (Office conversion, OCR, Markdown) and the
+Advanced tier (local AI, batch processing, search).
 
 ### Hardening pass
 A code review (Standards + Spec axes against PLAN.md) surfaced four real
@@ -87,7 +90,7 @@ apps/desktop/          Tauri + React frontend
   src-tauri/src/         job.rs (job runner), output.rs (mediated file open)
 engine/                 Python processing engine
   src/engine/tools/      one module per tool + shared plumbing (common.py)
-  tests/                 pytest suite (71 tests)
+  tests/                 pytest suite (79 tests)
 PLAN.md                 full architecture, job contract, roadmap, security requirements
 ```
 
