@@ -18,6 +18,8 @@ file tracks what's actually built.
 | PDF libraries | pypdf, PyMuPDF, pikepdf |
 | Images | Pillow |
 | Overlays | reportlab |
+| OCR | Tesseract (via pytesseract) — system install required |
+| Office conversion | LibreOffice headless (`soffice`) — system install required |
 
 The UI never touches document bytes directly — it calls Tauri commands with
 paths and settings, which spawn the Python engine as a one-shot subprocess per
@@ -26,8 +28,9 @@ job (see `apps/desktop/src-tauri/src/job.rs` and
 
 ## Status
 
-**Sprints 1–4 (MVP) and all of Phase 2 are done.** 19 of PLAN.md's 29 tools
-work end to end, backed by 79 Python tests and 4 Rust tests, all passing.
+**Sprints 1–4 (MVP), all of Phase 2, and most of Phase 3 are done.** 26 of
+PLAN.md's 29 tools work end to end, backed by 94 Python tests and 4 Rust
+tests, all passing.
 
 ### Sprint 1 — Desktop shell
 Tauri + React dashboard, category filters, search, tool cards, privacy
@@ -61,8 +64,26 @@ and baked permanently into the page via the same overlay pattern as
 watermark/page numbers (not interactive PDF annotation objects, which render
 inconsistently across viewers).
 
-**Not yet built:** Phase 3 (Office conversion, OCR, Markdown) and the
-Advanced tier (local AI, batch processing, search).
+### Phase 3 — Office conversion, OCR, Markdown (6 of 9)
+word-to-pdf · excel-to-pdf · ppt-to-pdf · html-to-pdf · markdown-to-pdf ·
+OCR · fill forms.
+
+OCR renders each page, runs Tesseract, and overlays an invisible text layer
+back onto the *original* page content (reportlab text render mode 3) —
+verified end to end: a page with zero extractable text gets exactly the
+recognized words back via an independent parser, with the original image
+still present. Office-to-PDF conversion shells out to headless LibreOffice.
+
+**Deliberately not built: pdf-to-word, pdf-to-excel, pdf-to-ppt.** This
+isn't a scoping choice — LibreOffice headless cannot do it. Opening a PDF
+routes it into Draw, and Draw has no export filter to Writer/Calc/Impress
+formats at all (confirmed directly: docx, odt, xlsx, and pptx targets all
+fail with "no export filter"). Shipping these would mean either failing
+every time or producing something misleadingly poor, so they're left
+unavailable rather than faked.
+
+**Not yet built:** the Advanced tier (local AI, batch processing, local
+search).
 
 ### Hardening pass
 A code review (Standards + Spec axes against PLAN.md) surfaced four real
@@ -89,14 +110,18 @@ apps/desktop/          Tauri + React frontend
   src/services/         Tauri command wrappers (engine, files, preview)
   src-tauri/src/         job.rs (job runner), output.rs (mediated file open)
 engine/                 Python processing engine
-  src/engine/tools/      one module per tool + shared plumbing (common.py)
-  tests/                 pytest suite (79 tests)
+  src/engine/tools/      one module per tool + shared plumbing (common.py, office_convert.py)
+  tests/                 pytest suite (94 tests)
 PLAN.md                 full architecture, job contract, roadmap, security requirements
 ```
 
 ## Running it
 
 ```bash
+# System dependencies for OCR and Office conversion (macOS/Homebrew)
+brew install tesseract
+brew install --cask libreoffice
+
 # Engine
 cd engine && uv sync && uv run pytest
 

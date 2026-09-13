@@ -28,15 +28,15 @@ export const TOOLS: ToolDefinition[] = [
 
   // Phase 3
   { id: "pdf-to-word", name: "PDF to Word", description: "Convert to an editable DOCX file.", category: "convert", stage: "phase3", available: false },
-  { id: "word-to-pdf", name: "Word to PDF", description: "Convert a DOCX file to PDF.", category: "convert", stage: "phase3", available: false },
+  { id: "word-to-pdf", name: "Word to PDF", description: "Convert a DOCX file to PDF.", category: "convert", stage: "phase3", available: true },
   { id: "pdf-to-excel", name: "PDF to Excel", description: "Extract tables into XLSX.", category: "convert", stage: "phase3", available: false },
-  { id: "excel-to-pdf", name: "Excel to PDF", description: "Convert an XLSX file to PDF.", category: "convert", stage: "phase3", available: false },
+  { id: "excel-to-pdf", name: "Excel to PDF", description: "Convert an XLSX file to PDF.", category: "convert", stage: "phase3", available: true },
   { id: "pdf-to-ppt", name: "PDF to PowerPoint", description: "Convert to an editable PPTX file.", category: "convert", stage: "phase3", available: false },
-  { id: "ppt-to-pdf", name: "PowerPoint to PDF", description: "Convert a PPTX file to PDF.", category: "convert", stage: "phase3", available: false },
-  { id: "html-to-pdf", name: "HTML to PDF", description: "Render a local HTML file to PDF.", category: "convert", stage: "phase3", available: false },
-  { id: "forms", name: "Fill Forms", description: "Fill and export PDF form fields.", category: "edit", stage: "phase3", available: false },
-  { id: "ocr", name: "OCR PDF", description: "Make scanned pages searchable.", category: "intelligence", stage: "phase3", available: false },
-  { id: "markdown", name: "Markdown to PDF", description: "Render Markdown as a formatted PDF.", category: "convert", stage: "phase3", available: false },
+  { id: "ppt-to-pdf", name: "PowerPoint to PDF", description: "Convert a PPTX file to PDF.", category: "convert", stage: "phase3", available: true },
+  { id: "html-to-pdf", name: "HTML to PDF", description: "Render a local HTML file to PDF.", category: "convert", stage: "phase3", available: true },
+  { id: "forms", name: "Fill Forms", description: "Fill and export PDF form fields.", category: "edit", stage: "phase3", available: true },
+  { id: "ocr", name: "OCR PDF", description: "Make scanned pages searchable.", category: "intelligence", stage: "phase3", available: true },
+  { id: "markdown", name: "Markdown to PDF", description: "Render Markdown as a formatted PDF.", category: "convert", stage: "phase3", available: true },
 
   // Advanced
   { id: "summarize", name: "Summarize Document", description: "Local summarization, no cloud calls.", category: "intelligence", stage: "advanced", available: false },

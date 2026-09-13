@@ -1,10 +1,13 @@
 import type { ComponentType } from "react";
+import { SimpleConversionWorkspace } from "../components/workspace/SimpleConversionWorkspace";
 import { AnnotateWorkspace } from "../features/annotate/AnnotateWorkspace";
 import { CompareWorkspace } from "../features/compare/CompareWorkspace";
 import { CompressWorkspace } from "../features/compress/CompressWorkspace";
 import { CropWorkspace } from "../features/crop/CropWorkspace";
+import { FormsWorkspace } from "../features/forms/FormsWorkspace";
 import { JpgToPdfWorkspace } from "../features/jpg-to-pdf/JpgToPdfWorkspace";
 import { MergeWorkspace } from "../features/merge/MergeWorkspace";
+import { OcrWorkspace } from "../features/ocr/OcrWorkspace";
 import { OrganizeWorkspace } from "../features/organize/OrganizeWorkspace";
 import { PageNumbersWorkspace } from "../features/page-numbers/PageNumbersWorkspace";
 import { PdfAWorkspace } from "../features/pdf-a/PdfAWorkspace";
@@ -22,6 +25,9 @@ import { WatermarkWorkspace } from "../features/watermark/WatermarkWorkspace";
 interface WorkspaceProps {
   onBack: () => void;
 }
+
+const OFFICE_CONVERSION_LIMITATIONS =
+  "Office conversions preserve most text and layout but may not match the original exactly.";
 
 const WORKSPACES: Record<string, ComponentType<WorkspaceProps>> = {
   merge: MergeWorkspace,
@@ -43,6 +49,61 @@ const WORKSPACES: Record<string, ComponentType<WorkspaceProps>> = {
   "pdf-a": PdfAWorkspace,
   "scan-import": ScanImportWorkspace,
   annotate: AnnotateWorkspace,
+  ocr: OcrWorkspace,
+  forms: FormsWorkspace,
+  "word-to-pdf": (props) => (
+    <SimpleConversionWorkspace
+      {...props}
+      title="Word to PDF"
+      tool="word-to-pdf"
+      fileLabel="Word"
+      fileExtensions={["doc", "docx"]}
+      runLabel="Convert to PDF"
+      helpText={OFFICE_CONVERSION_LIMITATIONS}
+    />
+  ),
+  "excel-to-pdf": (props) => (
+    <SimpleConversionWorkspace
+      {...props}
+      title="Excel to PDF"
+      tool="excel-to-pdf"
+      fileLabel="Excel"
+      fileExtensions={["xls", "xlsx"]}
+      runLabel="Convert to PDF"
+      helpText={OFFICE_CONVERSION_LIMITATIONS}
+    />
+  ),
+  "ppt-to-pdf": (props) => (
+    <SimpleConversionWorkspace
+      {...props}
+      title="PowerPoint to PDF"
+      tool="ppt-to-pdf"
+      fileLabel="PowerPoint"
+      fileExtensions={["ppt", "pptx"]}
+      runLabel="Convert to PDF"
+      helpText={OFFICE_CONVERSION_LIMITATIONS}
+    />
+  ),
+  "html-to-pdf": (props) => (
+    <SimpleConversionWorkspace
+      {...props}
+      title="HTML to PDF"
+      tool="html-to-pdf"
+      fileLabel="HTML"
+      fileExtensions={["html", "htm"]}
+      runLabel="Convert to PDF"
+    />
+  ),
+  markdown: (props) => (
+    <SimpleConversionWorkspace
+      {...props}
+      title="Markdown to PDF"
+      tool="markdown"
+      fileLabel="Markdown"
+      fileExtensions={["md", "markdown"]}
+      runLabel="Convert to PDF"
+    />
+  ),
 };
 
 interface ToolWorkspaceProps extends WorkspaceProps {
