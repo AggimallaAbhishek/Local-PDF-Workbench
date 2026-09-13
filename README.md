@@ -22,6 +22,7 @@ formats, known limitations, troubleshooting — see
 | Overlays | reportlab |
 | OCR | Tesseract (via pytesseract) — system install required |
 | Office conversion | LibreOffice headless (`soffice`) — system install required |
+| Local AI | llama.cpp (via llama-cpp-python) + Qwen2.5-1.5B-Instruct GGUF — model download required |
 
 The UI never touches document bytes directly — it calls Tauri commands with
 paths and settings, which spawn the Python engine as a one-shot subprocess per
@@ -30,10 +31,11 @@ job (see `apps/desktop/src-tauri/src/job.rs` and
 
 ## Status
 
-**Sprints 1–4 (MVP), all of Phase 2, most of Phase 3, and most of the
-Advanced tier are done.** 29 of PLAN.md's 34 tools work end to end (26 real
-engine tools + Batch/Workflow Builder, which reuse the others, + Search),
-backed by 100 Python tests and 6 Rust tests, all passing.
+**Sprints 1–4 (MVP), all of Phase 2, most of Phase 3, all of the Advanced
+tier, and Phase 5 hardening are done.** 31 of PLAN.md's 34 tools work end
+to end (28 real engine tools + Batch/Workflow Builder, which reuse the
+others, + Search), backed by 109 Python tests and 6 Rust tests, all
+passing.
 
 ### Sprint 1 — Desktop shell
 Tauri + React dashboard, category filters, search, tool cards, privacy
@@ -85,7 +87,7 @@ fail with "no export filter"). Shipping these would mean either failing
 every time or producing something misleadingly poor, so they're left
 unavailable rather than faked.
 
-### Advanced tier — Workflow Builder, Batch Processing, Search (3 of 5)
+### Advanced tier — Workflow Builder, Batch Processing, Search, Summarize, Translate (5 of 5)
 None of these needed new engine tools — they're frontend orchestration over
 the existing job runner:
 - **Batch Processing** runs one tool across every matching file in a folder,
@@ -103,11 +105,18 @@ flat key/value pairs — a tool like Crop, whose options nest under
 `margins`, doesn't fit that shape and isn't included there (its dedicated
 workspace still works normally).
 
-**Deliberately not built: Summarize, Translate.** Both need a local LLM
-runtime plus a multi-GB downloaded model — a different kind of dependency
-than anything else in this app, and not something to add without a
-separate decision on model choice/size/hardware requirements (PLAN.md
-itself flags this as a risk: "Local AI too heavy").
+**Summarize, Translate (5 of 5 — Advanced tier complete):** run against a
+local Qwen2.5-1.5B-Instruct model (Q4_K_M GGUF, ~1.1GB) via
+`llama-cpp-python`/llama.cpp — verified with real inference, not mocked
+(both produce a coherent output; translation was checked for actual target-
+language content). The model isn't bundled in the repo (a ~1GB binary,
+gitignored under `models/`) — download it once, see "Running it" below.
+Since jobs are one-shot subprocesses with no state between them, the model
+loads fresh each call (~12s) before generating (~1s) — a known trade-off of
+that architecture, not something fixed here. Long documents are truncated
+to fit the model's 4096-token context window, with an explicit warning
+when that happens rather than silently summarizing only part of a
+document.
 
 ### Code-review hardening pass
 A code review (Standards + Spec axes against PLAN.md) surfaced four real
@@ -148,11 +157,12 @@ every layer — no HTTP/updater plugin in the Rust `Cargo.toml`, no
 network-capable npm dependencies or `fetch`/`XMLHttpRequest`/`WebSocket`
 calls anywhere in the frontend, no remote font/CDN references, and no
 network imports or calls anywhere in the Python engine or its dependencies
-(pypdf/pikepdf/pymupdf/Pillow/reportlab/pytesseract/markdown are all local
-processing libraries). Verified at runtime, not just by reading code: the
-entire 104-test engine suite passes with `socket.socket.connect` and
-`socket.create_connection` both patched to raise on any call — proving the
-Python engine itself never attempts a connection — and a live `lsof`
+(pypdf/pikepdf/pymupdf/Pillow/reportlab/pytesseract/markdown/llama-cpp-python
+are all local-only libraries). Verified at runtime, not just by reading
+code: the entire engine test suite (109 tests, including real local-AI
+inference) passes with `socket.socket.connect` and `socket.create_connection`
+both patched to raise on any call — proving the Python engine itself never
+attempts a connection, even when running the LLM — and a live `lsof`
 socket check during a real LibreOffice conversion and a real Tesseract OCR
 run found no open network sockets from either external binary.
 
@@ -179,8 +189,9 @@ apps/desktop/          Tauri + React frontend
   src/services/         Tauri command wrappers (engine, files, preview)
   src-tauri/src/         job.rs (job runner), output.rs (mediated file open), directory.rs (folder listing)
 engine/                 Python processing engine
-  src/engine/tools/      one module per tool + shared plumbing (common.py, office_convert.py)
-  tests/                 pytest suite (100 tests)
+  src/engine/tools/      one module per tool + shared plumbing (common.py, office_convert.py, llm.py)
+  tests/                 pytest suite (109 tests)
+models/                 local AI model file (gitignored — download separately, see below)
 PLAN.md                 full architecture, job contract, roadmap, security requirements
 ```
 
@@ -190,6 +201,10 @@ PLAN.md                 full architecture, job contract, roadmap, security requi
 # System dependencies for OCR and Office conversion (macOS/Homebrew)
 brew install tesseract
 brew install --cask libreoffice
+
+# Local AI model for Summarize/Translate (~1.1GB) — optional, only needed for those two tools
+curl -L -o models/qwen2.5-1.5b-instruct-q4_k_m.gguf \
+  "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf"
 
 # Engine
 cd engine && uv sync && uv run pytest

@@ -39,8 +39,8 @@ export const TOOLS: ToolDefinition[] = [
   { id: "markdown", name: "Markdown to PDF", description: "Render Markdown as a formatted PDF.", category: "convert", stage: "phase3", available: true },
 
   // Advanced
-  { id: "summarize", name: "Summarize Document", description: "Local summarization, no cloud calls.", category: "intelligence", stage: "advanced", available: false },
-  { id: "translate", name: "Translate Document", description: "Offline translation.", category: "intelligence", stage: "advanced", available: false },
+  { id: "summarize", name: "Summarize Document", description: "Local summarization, no cloud calls.", category: "intelligence", stage: "advanced", available: true },
+  { id: "translate", name: "Translate Document", description: "Offline translation.", category: "intelligence", stage: "advanced", available: true },
   { id: "workflow-builder", name: "Workflow Builder", description: "Chain tools into a multi-step pipeline.", category: "workflows", stage: "advanced", available: true },
   { id: "batch", name: "Batch Processing", description: "Run a tool across an entire folder.", category: "workflows", stage: "advanced", available: true },
   { id: "search", name: "Document Search", description: "Local full-text search across your PDFs.", category: "intelligence", stage: "advanced", available: true },

@@ -21,6 +21,8 @@ import { ScanImportWorkspace } from "../features/scan-import/ScanImportWorkspace
 import { SearchWorkspace } from "../features/search/SearchWorkspace";
 import { SignWorkspace } from "../features/sign/SignWorkspace";
 import { SplitWorkspace } from "../features/split/SplitWorkspace";
+import { SummarizeWorkspace } from "../features/summarize/SummarizeWorkspace";
+import { TranslateWorkspace } from "../features/translate/TranslateWorkspace";
 import { UnlockWorkspace } from "../features/unlock/UnlockWorkspace";
 import { WatermarkWorkspace } from "../features/watermark/WatermarkWorkspace";
 import { WorkflowBuilderWorkspace } from "../features/workflow-builder/WorkflowBuilderWorkspace";
@@ -110,6 +112,8 @@ const WORKSPACES: Record<string, ComponentType<WorkspaceProps>> = {
   batch: BatchWorkspace,
   "workflow-builder": WorkflowBuilderWorkspace,
   search: SearchWorkspace,
+  summarize: SummarizeWorkspace,
+  translate: TranslateWorkspace,
 };
 
 interface ToolWorkspaceProps extends WorkspaceProps {

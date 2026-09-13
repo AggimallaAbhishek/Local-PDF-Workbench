@@ -37,7 +37,7 @@ numbered copy (`file (1).pdf`) rather than a silent overwrite.
 | Security | Protect, Unlock, Sign | PDF (+ PNG/JPG for a signature image) | PDF |
 | Convert | PDF↔JPG, JPG/PNG→PDF, PDF/A, Import Scan | PDF, JPG, PNG | PDF, JPG |
 | Convert (Office) | Word/Excel/PowerPoint/HTML/Markdown → PDF | DOC(X), XLS(X), PPT(X), HTML, MD | PDF |
-| Intelligence | Compare, OCR, Search | PDF | PDF, HTML report |
+| Intelligence | Compare, OCR, Search, Summarize, Translate | PDF | PDF, HTML report, plain text |
 | Workflows | Batch Processing, Workflow Builder | varies by chosen tool | varies |
 
 **Not supported:** PDF→Word, PDF→Excel, PDF→PowerPoint. This isn't a
@@ -47,9 +47,11 @@ headless mode; it opens a PDF into its Draw module, which has no export
 path to an editable Word/Excel/PowerPoint format. We'd rather leave these
 unavailable than ship something that fails every time or produces garbage.
 
-**Not yet built:** Summarize and Translate. Both would need a local AI
-model (multiple gigabytes) and a local inference runtime — a bigger,
-separate addition we haven't made yet.
+**Summarize and Translate need a one-time model download** (~1.1GB) —
+they're built and work fully offline once the model file is in place, but
+unlike every other tool, they need something beyond `npm install`/`uv
+sync`. If you see a "model not found" error, see the download command in
+the main [README](../README.md#running-it).
 
 ## Known limitations
 
@@ -80,6 +82,13 @@ separate addition we haven't made yet.
   scanned image — it doesn't replace or clean up the image itself. Accuracy
   depends on scan quality and the DPI setting; try a higher DPI for small
   or faint text.
+- **Summarize** and **Translate** run a small local model (1.5B parameters)
+  — good for a quick gist or a rough translation, not a substitute for
+  careful human review, especially for anything where translation accuracy
+  matters. Long documents are truncated to what fits in the model's
+  context window; you'll see a warning when that happens rather than a
+  silently incomplete result. The first run after opening the app is
+  slower (~10-15 seconds) while the model loads from disk.
 - **Batch Processing** and **Workflow Builder** only support tools whose
   options are simple (a dropdown, a number, a bit of text) — a few tools
   with more structured options (like Crop's per-side margins) aren't in
@@ -103,6 +112,8 @@ Every error the app shows has a short code. Here's what the common ones mean:
 | `NO_FORM_FIELDS` | **Fill Forms** couldn't find any fillable fields in this PDF. |
 | `OCR_ENGINE_NOT_FOUND` | Tesseract isn't installed. On macOS: `brew install tesseract`. |
 | `OFFICE_ENGINE_NOT_FOUND` | LibreOffice isn't installed. On macOS: `brew install --cask libreoffice`. |
+| `LOCAL_MODEL_NOT_FOUND` | **Summarize**/**Translate** need the local AI model downloaded first — see the README's "Running it" section. |
+| `NO_TEXT_FOUND` | The PDF (or the pages you selected) has no extractable text to summarize/translate/search — likely a scanned document; try **OCR** first. |
 | `CONVERSION_FAILED` / `CONVERSION_TIMED_OUT` | LibreOffice couldn't convert the file, or took too long. Very large or unusual documents can hit this. |
 | `OUTPUT_DIR_INVALID` / `OUTPUT_DIR_NOT_CREATABLE` | The output folder you picked can't be used — check you have permission to write there. |
 | `OUTPUT_VALIDATION_FAILED` | The tool ran but the result didn't check out (e.g. came out empty or unreadable) — this is a safety check catching a bug, not something you did wrong. If you can reproduce it, that's worth reporting. |

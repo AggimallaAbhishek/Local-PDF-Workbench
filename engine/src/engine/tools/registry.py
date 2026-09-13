@@ -30,6 +30,8 @@ from engine.tools.scan_import import scan_import
 from engine.tools.search import search
 from engine.tools.sign import sign
 from engine.tools.split import split
+from engine.tools.summarize import summarize
+from engine.tools.translate import translate
 from engine.tools.unlock import unlock
 from engine.tools.watermark import watermark
 from engine.tools.word_to_pdf import word_to_pdf
@@ -65,6 +67,8 @@ REGISTRY: dict[str, ToolHandler] = {
     "markdown": markdown_to_pdf,
     "forms": forms,
     "search": search,
+    "summarize": summarize,
+    "translate": translate,
 }
 
 
