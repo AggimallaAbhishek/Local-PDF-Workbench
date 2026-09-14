@@ -34,7 +34,7 @@ job (see `apps/desktop/src-tauri/src/job.rs` and
 **Sprints 1–4 (MVP), all of Phase 2, most of Phase 3, all of the Advanced
 tier, and Phase 5 hardening are done.** 31 of PLAN.md's 34 tools work end
 to end (28 real engine tools + Batch/Workflow Builder, which reuse the
-others, + Search), backed by 109 Python tests and 12 Rust tests, all
+others, + Search), backed by 109 Python tests and 15 Rust tests, all
 passing.
 
 ### Sprint 1 — Desktop shell
@@ -161,6 +161,20 @@ boundary rather than one JSON blob at the end - a real protocol change
 touching every tool, not just the Rust side, and a bigger scope than this
 pass.
 
+### Reusable presets (PLAN.md §13)
+Save a tool's configured options as a named preset ("Compress for email",
+"Archival PDF") and reload it later, from **Batch Processing**'s tool
+picker or any **Workflow Builder** step. Presets live in the same SQLite
+database as job history (a second table, `presets`) - both are small,
+low-write, single-user local data, so one connection covers both rather
+than adding a second database file.
+
+Scoped to the 13 tools in `features/shared/pipelineTools.ts` (the same
+catalog Batch/Workflow Builder already use) - any tool whose options are a
+flat key/value object. A tool like Crop, whose options nest under
+`margins`, isn't in that catalog and so has no preset support; its
+dedicated workspace is unaffected either way.
+
 ### Phase 5 — Hardening (in progress)
 
 **Security review** (dedicated pass, separate from the code review above):
@@ -213,8 +227,9 @@ Phase 5 is now functionally complete for a single-platform (macOS) release.
 apps/desktop/          Tauri + React frontend
   src/features/         one folder per tool (workspace UI); shared/pipelineTools.ts (Batch/Workflow catalog)
   src/services/         Tauri command wrappers (engine, files, preview)
-  src-tauri/src/         job.rs (job runner + cancellation), jobs_db.rs (SQLite history),
-                         output.rs (mediated file open), directory.rs (folder listing)
+  src-tauri/src/         job.rs (job runner + cancellation), jobs_db.rs (SQLite: history + presets),
+                         presets.rs (preset commands), output.rs (mediated file open),
+                         directory.rs (folder listing)
 engine/                 Python processing engine
   src/engine/tools/      one module per tool + shared plumbing (common.py, office_convert.py, llm.py)
   tests/                 pytest suite (109 tests)

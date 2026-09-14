@@ -2,6 +2,7 @@ mod directory;
 mod job;
 mod jobs_db;
 mod output;
+mod presets;
 
 use jobs_db::JobsDb;
 use tauri::Manager;
@@ -25,7 +26,10 @@ pub fn run() {
             job::list_jobs,
             output::open_output_path,
             output::reveal_output_path,
-            directory::list_files_in_dir
+            directory::list_files_in_dir,
+            presets::save_preset,
+            presets::list_presets,
+            presets::delete_preset
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

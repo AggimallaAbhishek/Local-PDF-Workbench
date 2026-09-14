@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GenericOptionsForm } from "../../components/workspace/GenericOptionsForm";
 import { OutputDirField } from "../../components/workspace/OutputDirField";
+import { PresetControls } from "../../components/workspace/PresetControls";
 import { WorkspaceLayout } from "../../components/workspace/WorkspaceLayout";
 import { listFilesInDir, pickFolder } from "../../services/files";
 import { runJob } from "../../services/engine";
@@ -95,6 +96,7 @@ export function BatchWorkspace({ onBack }: { onBack: () => void }) {
           ))}
         </select>
         <GenericOptionsForm fields={tool.fields} values={fieldValues} onChange={setFieldValues} />
+        <PresetControls tool={toolId} values={fieldValues} onLoad={setFieldValues} />
       </section>
 
       <section className="space-y-3">

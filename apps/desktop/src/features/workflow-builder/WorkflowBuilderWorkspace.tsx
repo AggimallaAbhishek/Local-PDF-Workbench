@@ -2,6 +2,7 @@ import { appCacheDir, join } from "@tauri-apps/api/path";
 import { useState } from "react";
 import { GenericOptionsForm } from "../../components/workspace/GenericOptionsForm";
 import { OutputDirField } from "../../components/workspace/OutputDirField";
+import { PresetControls } from "../../components/workspace/PresetControls";
 import { ResultPanel } from "../../components/workspace/ResultPanel";
 import { WorkspaceLayout } from "../../components/workspace/WorkspaceLayout";
 import { pickInputFiles } from "../../services/files";
@@ -193,6 +194,11 @@ export function WorkflowBuilderWorkspace({ onBack }: { onBack: () => void }) {
                   fields={tool.fields}
                   values={step.values}
                   onChange={(values) => setStepValues(step.id, values)}
+                />
+                <PresetControls
+                  tool={step.toolId}
+                  values={step.values}
+                  onLoad={(values) => setStepValues(step.id, values)}
                 />
               </li>
             );
